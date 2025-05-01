@@ -61,4 +61,4 @@ $results = $teamsUsers | ForEach-Object {
 }
 
 # Export results to CSV
-$results | Export-Csv -Path "C:\Users\adm_mattwood.MERCER\Desktop\Teams_Phone_Directory.csv" -NoTypeInformation -Force
+$results | Export-Csv -Path "$env:USERPROFILE\Desktop\Teams_Phone_Directory.csv" -NoTypeInformation -Force
