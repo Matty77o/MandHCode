@@ -10,8 +10,8 @@ $CalendarOwner = Read-Host "Enter the calendar owner's email address"
 # Prompt the user to enter the delegate user's email
 $DelegateUser = Read-Host "Enter the delegate user's email address"
 
-# Grant 'Editor' access to the delegate for the owner's calendar
-Add-MailboxFolderPermission -Identity "${CalendarOwner}:\Calendar" -User $DelegateUser -AccessRights Editor
+# Grant 'Reviewer' access to the delegate for the owner's calendar
+Add-MailboxFolderPermission -Identity "${CalendarOwner}:\Calendar" -User $DelegateUser -AccessRights Reviewer
 
 # Verify that the permission was applied
 Get-MailboxFolderPermission -Identity "${CalendarOwner}:\Calendar" | Where-Object { $_.User -eq $DelegateUser }
