@@ -7,7 +7,7 @@ Connect-ExchangeOnline
 Connect-MgGraph -Scopes "User.Read.All", "Directory.Read.All"
 
 # Output path
-$csvPath = "C:\Users\$env:USERPROFILE\Desktop\DeactivatedSharedMailboxes_OnePerRow.csv"
+$csvPath = "$env:USERPROFILE\Desktop\DeactivatedSharedMailboxes_OnePerRow.csv"
 $mailboxReport = @()
 
 # Get all shared mailboxes
