@@ -19,4 +19,4 @@ $inactiveUserFiles = $driveItems | Where-Object {
 $inactiveUserFiles | Select-Object Name, FullName | Format-Table -AutoSize
 
 # Optionally, export the results to a CSV file
-$inactiveUserFiles | Select-Object Name, FullName | Export-Csv -Path "InactiveUserFiles.csv" -NoTypeInformation
+$inactiveUserFiles | Select-Object Name, FullName | Export-Csv -Path "$env:USERPROFILE\Desktop\InactiveUserFiles.csv" -NoTypeInformation
