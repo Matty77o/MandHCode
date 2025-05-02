@@ -10,11 +10,21 @@ $CalendarOwner = Read-Host "Enter the calendar owner's email address"
 # Prompt the user to enter the delegate user's email
 $DelegateUser = Read-Host "Enter the delegate user's email address"
 
-# Grant 'Reviewer' access to the delegate for the owner's calendar
-Add-MailboxFolderPermission -Identity "${CalendarOwner}:\Calendar" -User $DelegateUser -AccessRights Reviewer
+# Define the folder identity
+$CalendarFolder = "${CalendarOwner}:\Calendar"
+
+# Grant access based on whether the user is 'Default' or not
+if ($DelegateUser -eq "Default") {
+    # Modify existing permission for 'Default'
+    Set-MailboxFolderPermission -Identity $CalendarFolder -User Default -AccessRights Reviewer
+}
+else {
+    # Grant new permission to a specific delegate
+    Add-MailboxFolderPermission -Identity $CalendarFolder -User $DelegateUser -AccessRights Reviewer
+}
 
 # Verify that the permission was applied
-Get-MailboxFolderPermission -Identity "${CalendarOwner}:\Calendar" | Where-Object { $_.User -eq $DelegateUser }
+Get-MailboxFolderPermission -Identity $CalendarFolder | Where-Object { $_.User -eq $DelegateUser }
 
 # Disconnect from Exchange Online
 Disconnect-ExchangeOnline -Confirm:$false
