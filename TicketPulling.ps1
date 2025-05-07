@@ -17,7 +17,8 @@ function Get-Tickets {
 function Process-Tickets {
     param (
         [array]$tickets,
-        [int]$page
+        [int]$page,
+        [ref]$matchingTickets
     )
     
     # Initialize a flag to track if any matching tickets are found on the current page
@@ -48,8 +49,13 @@ function Process-Tickets {
             }
         }
 
-        # If a match is found, print the ticket ID and mark the page as having matches
+        # If a match is found, add ticket data to the matching tickets array
         if ($matchFound) {
+            $matchingTickets.Value += [PSCustomObject]@{
+                TicketID = $ticketId
+                Subject = $subject
+                Description = $description
+            }
             Write-Host "Page $page - Matching ticket found - Ticket ID: $ticketId"
             $pageHasMatches = $true
         }
@@ -92,8 +98,8 @@ $headers = @{
     'Authorization' = 'Basic ' + [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(("{0}:X" -f $apiKey)))
 }
 
-# Initialize an array to store unique ticket IDs
-$ticketIds = @()
+# Initialize an array to store matching tickets
+$matchingTickets = @()
 
 # Fetch tickets from Freshservice API with pagination
 $page = 1
@@ -104,8 +110,8 @@ while ($page -le 767) {  # Ensure the loop runs until page 767
     $url = "https://$domain/api/v2/tickets?page=$page"
     $response = Get-Tickets -url $url
     
-    # Process and display only tickets that match the "password reset" keywords
-    Process-Tickets -tickets $response.tickets -page $page
+    # Process and collect matching tickets
+    Process-Tickets -tickets $response.tickets -page $page -matchingTickets ([ref]$matchingTickets)
 
     # Increment the page count
     $page++
@@ -115,3 +121,11 @@ while ($page -le 767) {  # Ensure the loop runs until page 767
 }
 
 Write-Host "Processing complete."
+
+# Export the matching tickets to CSV if any matches were found
+if ($matchingTickets.Count -gt 0) {
+    $matchingTickets | Export-Csv -Path $outputFilePath -NoTypeInformation
+    Write-Host "Matching tickets exported to $outputFilePath"
+} else {
+    Write-Host "No matching tickets found. No data exported."
+}
